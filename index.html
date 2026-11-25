@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hermanos del aire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Oswald:wght@500&display=swap">
+<style>
+
+:root{color-scheme:dark;--bg:#081428;--panel:#0E2140;--ink:#F4F1EA;--dim:#8D9AB2;--red:#D91023;--line:#22385E}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 'EB Garamond',Georgia,serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,.st:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.flag{display:flex;height:6px}.flag i{flex:1;background:var(--red)}.flag i:nth-child(2){background:#fff}
+
+/* Portada */
+#cover{min-height:100svh;display:flex;flex-direction:column;justify-content:center}
+.hero{position:relative;flex:0 0 auto;width:100%;max-width:1100px;margin:0 auto;aspect-ratio:2345/1320;max-height:62svh;background:url(collage.jpg) 50% 50%/contain no-repeat}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,20,40,0) 80%,var(--bg) 100%)}
+.ctext{padding:8px max(6vw,20px) max(40px,env(safe-area-inset-bottom));text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.kick{font:500 14px/1.3 Oswald,sans-serif;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;margin:0}
+h1{font:900 clamp(38px,10vw,64px)/1.04 Cinzel,serif;margin:0;text-wrap:balance}
+.lema{display:flex;align-items:center;gap:12px;font:500 16px Oswald,sans-serif;letter-spacing:.12em;color:#fff;margin:0}
+.lema .flag{width:44px;height:4px}
+.play{margin-top:14px;display:inline-flex;align-items:center;gap:12px;background:var(--red);border:0;border-radius:999px;padding:16px 34px;font:500 20px Oswald,sans-serif;letter-spacing:.06em;box-shadow:0 10px 30px rgba(217,16,35,.35)}
+.play svg{width:22px;height:22px}
+.credit{font-size:15px;color:var(--dim);margin:6px 0 0}
+
+/* Reproductor */
+#player{display:none}
+.bar{position:sticky;top:0;z-index:5;background:rgba(8,20,40,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.barin{max-width:720px;margin:0 auto;padding:10px 16px 12px;display:grid;grid-template-columns:56px minmax(0,1fr) 52px;gap:12px;align-items:center}
+.thumb{width:56px;height:56px;border-radius:8px;background:url(collage_thumb.jpg) 50% 40%/cover}
+.bt{font:700 17px/1.2 Cinzel,serif;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bs{font-size:14px;color:var(--dim);margin:0}
+.pp{width:52px;height:52px;border-radius:50%;border:0;background:var(--red);display:grid;place-items:center}
+.pp svg{width:22px;height:22px}
+.prog{grid-column:1/-1;display:flex;align-items:center;gap:10px;font:500 13px Oswald,sans-serif;color:var(--dim);font-variant-numeric:tabular-nums}
+.track{flex:1;height:22px;display:flex;align-items:center;cursor:pointer}
+.track div{height:4px;width:100%;background:var(--line);border-radius:2px;overflow:hidden}
+.track span{display:block;height:100%;width:0;background:#fff}
+.lyrics{max-width:640px;margin:0 auto;padding:28vh 22px 40vh;display:flex;flex-direction:column;gap:22px}
+.st{margin:0;padding:10px 14px;border-radius:10px;font-size:21px;line-height:1.45;color:#56657F;transition:color .35s,transform .35s,background .35s;transform-origin:left center;cursor:pointer}
+.st.ch{font-weight:600}
+.st.cry{font:500 18px/1.6 Oswald,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.st.past{color:#7E8BA3}
+.st.on{color:#fff;background:var(--panel);transform:scale(1.03)}
+.st.cry.on{color:#fff;background:var(--red)}
+.end{max-width:640px;margin:-30vh auto 0;padding:0 22px 60px;text-align:center;color:var(--dim);font-size:15px}
+.end b{display:block;font:700 22px Cinzel,serif;color:var(--ink);margin-bottom:6px}
+
+/* Modo ajuste (#ajustar) */
+#adj{display:none;position:fixed;left:0;right:0;bottom:0;z-index:9;background:#111c30;border-top:2px solid var(--red);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+#adj .row{max-width:720px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+#adj button{border:0;border-radius:10px;padding:12px 16px;background:#fff;color:#081428;font:500 16px Oswald,sans-serif}
+#adj #mark{background:var(--red);color:#fff;flex:1 1 220px;min-height:52px}
+#adj textarea{width:100%;max-width:720px;display:block;margin:10px auto 0;height:70px;background:#081428;color:#fff;border:1px solid var(--line);border-radius:8px;font:14px monospace;padding:8px}
+@media (prefers-reduced-motion:reduce){.st{transition:none}.st.on{transform:none}}
+
+.st .ln{display:block;transition:color .3s}
+.st.on .ln{color:#9FB0CC}
+.st.on .ln.now{color:#fff}
+.st.cry.on .ln{color:#fff}
+.photo{font-size:12px;color:#5E6C86;margin:2px 0 0}
+</style>
+</head>
+<body>
+<section id="cover">
+  <div class="hero" role="img" aria-label="Aviones Canberra de la Fuerza Aérea del Perú en la plataforma"></div>
+  <div class="ctext">
+    <p class="kick">Grupo Soy del Perú</p>
+    <h1>Hermanos del aire</h1>
+    <p class="lema"><span class="flag"><i></i><i></i><i></i></span>AMIGOS ETERNOS<span class="flag"><i></i><i></i><i></i></span></p>
+    <button class="play" id="start"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4.5v15l13-7.5z"/></svg>Escuchar y cantar</button>
+    <p class="credit">Letra: José Luis Arenas</p>
+  </div>
+  <div class="flag"><i></i><i></i><i></i></div>
+</section>
+<section id="player">
+  <div class="bar"><div class="barin">
+    <div class="thumb" aria-hidden="true"></div>
+    <div><p class="bt">Hermanos del aire</p><p class="bs">Grupo Soy del Perú</p></div>
+    <button class="pp" id="pp" aria-label="Pausar"></button>
+    <div class="prog"><span id="cur">0:00</span><div class="track" id="track" role="slider" aria-label="Posición de la canción" tabindex="0"><div><span id="fill"></span></div></div><span id="dur">3:59</span></div>
+  </div></div>
+  <div class="lyrics" id="lyrics"></div>
+  <div class="end"><b>Hermanos del aire</b>Fuerza Aérea del Perú<br>Letra: José Luis Arenas</div>
+</section>
+<audio id="au" src="Hermanos_del_aire.mp3" preload="metadata"></audio>
+<script>
+{
+// Cada estrofa: [tipo, [[segundo, línea], ...]]   v = verso, c = coro, f = final
+const S=[["v", [[27, "Nos conocimos cuando ingresamos"], [33, "a la Escuela de Oficiales de la Fuerza Aérea,"], [39, "con grandes sueños y mucho orgullo,"], [46, "vestimos el uniforme azul."]]], ["v", [[52, "Nos forjamos bajando fierro y dianas de madrugada,"], [58, "y sin saber cómo nació esta amistad."]]], ["v", [[65, "Los fines de semana era nuestra libertad,"], [71, "salíamos en grupo a divertirnos;"], [78, "la ciudad entera parecía pequeña"], [84, "cuando salíamos para unas chelas tomar."]]], ["v", [[90, "Ya de oficiales compartimos tantas cosas,"], [97, "risas eternas, historias sin final."], [103, "¿Recuerdas ese disco lleno de rock de los 70?"], [110, "Todavía suena igual que tiempo atrás."]]], ["v", [[117, "Después el retiro nos dio otras mañanas,"], [123, "vivíamos cerca, ¡qué felicidad!"], [129, "Largas caminatas hablando de la vida"], [135, "y esas conversaciones que hacían volar."]]], ["v", [[142, "Hoy estamos separados por la distancia,"], [146, "pero basta una llamada para volver a despegar,"], [155, "porque hay amistades que el tiempo vuelve inmortales,"], [161, "como viejas melodías que jamás dejan de sonar."]]], ["c", [[169, "Somos hermanos del aire y del tiempo,"], [172, "guardianes de una historia de verdad,"], [175, "cadetes, oficiales, amigos eternos,"], [179, "compañeros de la misma libertad."]]], ["c", [[182, "Cuando la vida nos mire de frente,"], [185, "con canas y recuerdos por contar,"], [188, "seguiremos riendo como aquellos jóvenes"], [192, "que nunca dejaron de soñar."]]], ["f", [[197, "Y aunque cambien los años"], [200, "y el mundo siga girando,"], [204, "siempre habrá una canción que nos siga uniendo"], [212, "como hermanos volando."]]]];
+const $=id=>document.getElementById(id);
+const au=$('au'),L=$('lyrics');
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+L.innerHTML=S.map((s,i)=>`<p class="st ${s[0]==='c'?'ch':s[0]==='f'?'cry':''}" tabindex="0">${s[1].map(l=>`<span class="ln">${esc(l[1])}</span>`).join('')}</p>`).join('');
+const els=[...L.children],lns=els.map(e=>[...e.children]);
+const PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M7 4.5v15l13-7.5z"/></svg>';
+const PAUSE='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+const fmt=t=>{t=Math.max(0,t|0);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};
+let cur=-1,curL='';
+function setPP(){const p=au.paused;$('pp').innerHTML=p?PLAY:PAUSE;$('pp').setAttribute('aria-label',p?'Reproducir':'Pausar')}
+function play(){const r=au.play();if(r&&r.catch)r.catch(()=>{});}
+function show(i,j){
+  const key=i+':'+j;if(key===curL)return;curL=key;
+  if(i!==cur){cur=i;els.forEach((e,k)=>{e.classList.toggle('on',k===i);e.classList.toggle('past',k<i)});
+    if(i>=0)els[i].scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});}
+  lns.forEach((ls,k)=>ls.forEach((l,m)=>l.classList.toggle('now',k===i&&m===j)));
+}
+function tick(){
+  const t=au.currentTime,d=au.duration||239;
+  $('cur').textContent=fmt(t);$('fill').style.width=(t/d*100)+'%';
+  let i=-1,j=-1;S.forEach((s,k)=>s[1].forEach((l,m)=>{if(t>=l[0]-0.3){i=k;j=m}}));
+  show(i,j);
+}
+$('start').addEventListener('click',()=>{$('cover').style.display='none';$('player').style.display='block';window.scrollTo(0,0);play();});
+$('pp').addEventListener('click',()=>{au.paused?play():au.pause()});
+au.addEventListener('play',setPP);au.addEventListener('pause',setPP);
+au.addEventListener('timeupdate',tick);
+au.addEventListener('loadedmetadata',()=>{$('dur').textContent=fmt(au.duration)});
+au.addEventListener('ended',()=>{show(-1,-1);window.scrollTo({top:0,behavior:'smooth'})});
+function seekX(x){const r=$('track').getBoundingClientRect();const d=au.duration||239;au.currentTime=Math.min(Math.max((x-r.left)/r.width,0),1)*d}
+$('track').addEventListener('click',e=>seekX(e.clientX));
+$('track').addEventListener('keydown',e=>{if(e.key==='ArrowRight')au.currentTime+=5;if(e.key==='ArrowLeft')au.currentTime-=5});
+els.forEach((e,i)=>{const go=()=>{au.currentTime=S[i][1][0][0]+0.05;if(au.paused)play()};e.addEventListener('click',go);e.addEventListener('keydown',ev=>{if(ev.key==='Enter')go()})});
+setPP();
+}
+</script>
+</body>
+</html>
